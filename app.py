@@ -5,8 +5,8 @@ import csv
 import hashlib
 import json
 
-from merkletools import MerkleTools
-from blockchain import Blockchain
+# from merkletools import MerkleTools
+# from blockchain import Blockchain
 
 
 cwd = os.getcwd()
