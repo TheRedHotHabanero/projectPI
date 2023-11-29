@@ -25,14 +25,18 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-	passwords = {"MIPT":"mfti4321"}
+	passwords = {}
+
+	with open("passwords.json") as f:
+		passwords = json.loads(f.read())
+
 	if request.method == 'POST':
 		username = request.form['username']
 		password = request.form['password']
 		if username not in passwords.keys():
 			flash("University not registered", "error")
 			return render_template('login.html')
-		if passwords[username] != password:
+		if passwords[username] != hashlib.sha3_256(password.encode()).hexdigest():
 			flash("Authorization failed. Try again.", "error")
 			return render_template('login.html')	
 		session['logged_in'] = True

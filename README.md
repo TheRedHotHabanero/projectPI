@@ -29,6 +29,22 @@ conda install nltk
 ``` 
 git clone https://github.com/TheRedHotHabanero/projectPI.git
 cd projectPI
-python app.py
 ```
+4.
+Настраиваем блокчейн аккаунты и запускаем контракт:
+Устанавливаем ganache:
+```
+sudo apt-get install npm
+npm install ganache --global
+ganache
+```
+Теперь на 127.0.0.1:8545 живут 10 аккаунтов с 100 ETH! Копируем адрес и ключ одного их них и вставляем в deploy.py:
+<image src="deploy.png">
+Запускаем контракт:
+pip install py-solc-x
+puthon deploy.py
+Получаем адрес, а также abi нашего контракта из CompiledCode.json и вставляем их в contractDetails или передаем в качестве аргументов при создании контракта.
+Теперь можно запускать проект:
+python app.py
+
 Вылезет в консоли url: открываем его в браузере и наслаждаемся видом
