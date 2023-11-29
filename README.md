@@ -13,3 +13,22 @@
 
 <image src="readme_wall.png">
 
+## Как запустить
+
+1. Усановите miniconda: https://docs.conda.io/projects/miniconda/en/latest/
+2. 
+```
+conda create -n <имя>
+conda activate <имя>
+conda install flask
+conda install -c conda-forge web3
+conda install -c conda-forge pdfminer
+conda install nltk
+```
+3.
+``` 
+git clone https://github.com/TheRedHotHabanero/projectPI.git
+cd projectPI
+python app.py
+```
+Вылезет в консоли url: открываем его в браузере и наслаждаемся видом
