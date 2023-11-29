@@ -1,0 +1,24 @@
+{% extends 'layout.html' %}
+{% block body %}
+<div class="container-fluid mt-5 pt-md-5">
+  <div class="row">
+    <div class="col"></div>
+    <div class="col">
+      <h1>Вход</h1>
+      <form action="" method="POST">
+        <div class="form-group">
+          <h5><label>Имя пользователя</label></h5>
+          <input type="text" name="username" class="form-control" value={{request.form.username}}>
+        </div>
+        <div class="form-group">
+          <h5><label>Пароль</label></h5>
+          <input type="password" name="password" class="form-control" value={{request.form.password}}>
+        </div>
+        <button type="submit" class="btn bg-white text-dark btn-lg btn-block mt-5"
+          style="border-bottom: #EE82EE 4px solid; font-family: Verdana, Geneva, Tahoma, sans-serif; font-style: normal;">Войти</button>
+      </form>
+    </div>
+    <div class="col"></div>
+  </div>
+</div>
+{% endblock %}
