@@ -1,11 +1,8 @@
 from web3 import Web3
 import json
 
-
-# Using ganache leads to url creation
-ganache_url = "http://127.0.0.1:7545"
-
-registeredInstitutes = {"MIPT": 1, "MIFI": 2, "SPbGU": 3}
+ganache_url = "http://127.0.0.1:8545"
+registeredInstitutes = {"MIPT": 1, "MIFI": 2, "SPBGU": 3}
 
 class Blockchain:
     def __init__(self, institute):
@@ -14,26 +11,24 @@ class Blockchain:
 
         with open('contractDetails.json') as f:
             contractDetails = json.load(f)
-            contractAddress = self.web3.toChecksumAddress(contractDetails["address"])
+            contractAddress = self.web3.to_checksum_address(contractDetails["address"])
             abi = contractDetails["abi"]
         
         self.contract = self.web3.eth.contract(address=contractAddress, abi=abi)
 
         if institute in registeredInstitutes.keys():
-            self.web3.eth.defaultAccount = self.web3.eth.accounts[registeredInstitutes[institute]]
+            self.web3.eth.default_account = self.web3.eth.accounts[registeredInstitutes[institute]]
             print("Connected to blockchain with account: ", institute)
         else:
-            self.web3.eth.defaultAccount = self.web3.eth.accounts[0]
+            self.web3.eth.default_account = self.web3.eth.accounts[0]
             print("Connected to blockchain with default account")
     
     def addBatchMerkleRoot(self, batch, batchMerkleRoot):
         self.contract.functions.addBatchMerkleRoot(self.institute, batch, batchMerkleRoot).transact()
-
+    
     def verifyBatchMerkleRoot(self, institute, batch, batchMerkleRoot):
         return self.contract.functions.verifyBatchMerkleRoot(institute, batch, batchMerkleRoot).call()
-
-if __name__ == "__main__":
-    bc = Blockchain("MIPT")
-    res = bc.verifyBatchMerkleRoot("MIPT", "2023", "0x14a6b49F7e3c04503A7b31DA4Abb4808c4d5E1Ac")
-    print(res)
-
+    
+    def registerInstitute(self, institute):
+        self.contract.functions.registerInstitute(institute).transact()
+        

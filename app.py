@@ -5,13 +5,13 @@ import csv
 import hashlib
 import json
 
-# from merkletools import MerkleTools
-# from blockchain import Blockchain
+from merkletools import MerkleTools
+from blockchain import Blockchain
 
 
 cwd = os.getcwd()
-CSVS = os.path.join(cwd, 'data/University_CSVs')
-JSON_KEYS = os.path.join(cwd, 'data/JSON_keys')
+CSVS = os.path.join(cwd, 'static/University_CSVs')
+JSON_KEYS = os.path.join(cwd, 'static/JSON_keys')
 
 app = Flask(__name__)
 app.secret_key = "parol_losyash"
@@ -78,16 +78,16 @@ def upload_file():
 			
 			institute = session['username']
 			bc = Blockchain(institute)
+			bc.registerInstitute(institute)
 			print("Adding to the blockchain: ", session['username'], year_batch, merkleRoot)
-			try:
-				bc.addBatchMerkleRoot(year_batch, merkleRoot)
-			except:
-				error = "Institute not registered!"
-				return render_template('upload.html', error=error)
+
+			bc.addBatchMerkleRoot(year_batch, merkleRoot)
+			#error = "Institute not registered!"
+			#return render_template('upload.html', error=error)
 
 			itr = 0
 
-			with open(os.path.join(app.config['CSV_FOLDER'], filename)) as File:  
+			with open(os.path.join(app.config['CSVs'], filename)) as File:  
 				reader = csv.reader(File)
 				for row in reader:
 					data={}
@@ -118,14 +118,14 @@ def upload_file():
 def verify():
 
 	if request.method == 'POST':
-		if 'file' not in request.files:
-			flash("No file selected", "error")
-			error = "No file selected"
-			return render_template('verify.html', error = error)
+	#	if 'file' not in request.files:
+	#		flash("No file selected", "error")
+	#		error = "No file selected"
+	#		return render_template('verify.html', error = error)
 		
 		jsonFile = request.files['json']
 		if jsonFile.filename == '':
-			flash("No file selected", "error")
+			flash("No file selected!", "error")
 			return render_template('verify.html')
 		
 		if jsonFile and jsonFile.filename.split(".")[-1] == 'json':
@@ -158,9 +158,6 @@ def verify():
 			return render_template('verify.html', error = error)
 
 	return render_template('verify.html')
-
-
-
 
 
 if __name__ == "__main__":
