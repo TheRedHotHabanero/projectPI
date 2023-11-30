@@ -36,8 +36,8 @@ bytecode = compiled_sol["contracts"]["Credentials.sol"]["Credentials"]["evm"]["b
 
 w3 = Web3(Web3.HTTPProvider("http://127.0.0.1:8545"))
 chain_id = 1337
-my_address= "0x95eEcC96dCc7E975164D8535843f76A7b55706D9"
-private_key = "0x66e23ddd846593ba2cecbe96034eeadc4f1b99e763f5cba6afe541d2f54c01a7"
+my_address= "0xC36Eb120426B0A6A85a8b9e400dFb7cF74B7290D"
+private_key = "0xf86a2c27cd353e75b3da95a65aeb517331466fac6c1df8228f72d8c154ff3ca4"
 
 SmartContractDemo = w3.eth.contract(abi=abi, bytecode=bytecode)
 
@@ -46,7 +46,7 @@ transaction = SmartContractDemo.constructor().build_transaction({
     "chainId": chain_id,
     "gasPrice": w3.eth.gas_price,
     "from": my_address,
-    "nonce": w3.eth.get_transaction_count("0x95eEcC96dCc7E975164D8535843f76A7b55706D9")
+    "nonce": w3.eth.get_transaction_count("0xC36Eb120426B0A6A85a8b9e400dFb7cF74B7290D")
 })
 
 signed_txn = w3.eth.account.sign_transaction(transaction, private_key=private_key)

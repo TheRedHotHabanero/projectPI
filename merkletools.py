@@ -1,7 +1,7 @@
 import hashlib
 import binascii
 import codecs
-import sha3
+
 
 class MerkleTools(object):
     def __init__(self, hash_type="sha256"):
@@ -15,10 +15,9 @@ class MerkleTools(object):
         self.reset_tree()
 
     def _to_hex(self, x):
-        # Different python versions cases taken
-        try:
+        try:  # python3
             return x.hex()
-        except:
+        except:  # python2
             return binascii.hexlify(x)
 
     def reset_tree(self):
@@ -28,8 +27,7 @@ class MerkleTools(object):
 
     def add_leaf(self, values, do_hash=False):
         self.is_ready = False
-
-        # Check the case when leaf is single
+        # check if single leaf
         if not isinstance(values, tuple) and not isinstance(values, list):
             values = [values]
         for v in values:
@@ -50,10 +48,8 @@ class MerkleTools(object):
 
     def _calculate_next_level(self):
         solo_leave = None
-
-        # Num of leaves
-        N = len(self.levels[0])
-        if N % 2 == 1:
+        N = len(self.levels[0])  # number of leaves on the level
+        if N % 2 == 1:  # if odd number of leaves on the level
             solo_leave = self.levels[0][-1]
             N -= 1
 
@@ -62,9 +58,7 @@ class MerkleTools(object):
             new_level.append(self.hash_function(l+r).digest())
         if solo_leave is not None:
             new_level.append(solo_leave)
-
-        # Next level prepending
-        self.levels = [new_level, ] + self.levels
+        self.levels = [new_level, ] + self.levels  # prepend new level
 
     def make_tree(self):
         self.is_ready = False
@@ -75,46 +69,51 @@ class MerkleTools(object):
         self.is_ready = True
 
     def get_merkle_root(self):
-        if self.is_ready and self.levels is not None:
-            return self._to_hex(self.levels[0][0])
-
-        return None
+        if self.is_ready:
+            if self.levels is not None:
+                return self._to_hex(self.levels[0][0])
+            else:
+                return None
+        else:
+            return None
 
     def get_proof(self, index):
         if self.levels is None:
             return None
         elif not self.is_ready or index > len(self.leaves)-1 or index < 0:
             return None
-
-        proof = []
-        for x in range(len(self.levels) - 1, 0, -1):
-            level_len = len(self.levels[x])
-            if (index == level_len - 1) and (level_len % 2 == 1):
+        else:
+            proof = []
+            for x in range(len(self.levels) - 1, 0, -1):
+                level_len = len(self.levels[x])
+                if (index == level_len - 1) and (level_len % 2 == 1):  # skip if this is an odd end node
+                    index = int(index / 2.)
+                    continue
+                is_right_node = index % 2
+                sibling_index = index - 1 if is_right_node else index + 1
+                sibling_pos = "left" if is_right_node else "right"
+                sibling_value = self._to_hex(self.levels[x][sibling_index])
+                proof.append({sibling_pos: sibling_value})
                 index = int(index / 2.)
-                continue
-            is_right_node = index % 2
-            sibling_index = index - 1 if is_right_node else index + 1
-            sibling_pos = "left" if is_right_node else "right"
-            sibling_value = self._to_hex(self.levels[x][sibling_index])
-            proof.append({sibling_pos: sibling_value})
-            index = int(index / 2.)
-        return proof
+            return proof
 
     def validate_proof(self, proof, target_hash):
         target_hash = bytearray.fromhex(target_hash)
         if len(proof) == 0:
             print(target_hash)
             return target_hash
-
-        proof_hash = target_hash
-        for p in proof:
-            try:
-                sibling = bytearray.fromhex(p['left'])
-                proof_hash = self.hash_function(sibling + proof_hash).digest()
-            except:
-                sibling = bytearray.fromhex(p['right'])
-                proof_hash = self.hash_function(proof_hash + sibling).digest()
-
-        print(proof_hash)
-
-        return proof_hash.hex()
+        else:
+            proof_hash = target_hash
+            for p in proof:
+                try:
+                    # the sibling is a left node
+                    sibling = bytearray.fromhex(p['left'])
+                    proof_hash = self.hash_function(sibling + proof_hash).digest()
+                except:
+                    # the sibling is a right node
+                    sibling = bytearray.fromhex(p['right'])
+                    proof_hash = self.hash_function(proof_hash + sibling).digest()
+            # codecs.decode(proof_hash, 'hex_codec')
+            # proof_hash = proof_hash.decode('hex')
+            print(proof_hash)
+            return proof_hash.hex()
