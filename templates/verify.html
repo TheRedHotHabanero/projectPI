@@ -1,15 +1,12 @@
 {% extends 'layout.html' %}
 {% block body %}
-<h1 class="text-center pt-5">Select files to upload</h1>
+<h1 class="text-lg-center p-lg-5 p-lg-5", style="top: 100%;"></h1>
+<h1 class="text-lg-center p-lg-5 p-lg-5", style="top: 100%;">Загрузите файлы для проверки</h1>
 <form method="post" action="/verify" enctype="multipart/form-data">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col bucket m-3">
-                <p class="pabs" id="pdfText">Upload Resume PDF</p>
-                <input id="pdfInput" type="file" name="pdf" autocomplete="off" required>
-            </div>
-            <div class="col bucket m-3">
-                <p class="pabs" id="jsonText">Upload JSON Certificate</p>
+    <div class="container-fluid" style="margin-top: 5%;">
+        <div class="uploadForm">
+            <div class="col bucket m-3" style="left: 25%;">
+                <p class="pabs" id="jsonText" style="margin-top: 60px;">Загрузите JSON сертификат</p>
                 <input id="jsonInput" type="file" name="json" autocomplete="off" required>
             </div>
         </div>
@@ -18,7 +15,7 @@
         <div class="col-2"></div>
         <div class="col">
             <button type="submit" class="btn bg-white text-dark btn-lg btn-block mt-5"
-                style="border-bottom: #1ac9e4 4px solid;">Verify</button>
+                style="border-bottom: #EE82EE 4px solid; width: 100; height: 150;">Проверить</button>
         </div>
         <div class="col-2"></div>
     </div>
