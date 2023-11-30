@@ -34,10 +34,10 @@ def login():
 		username = request.form['username']
 		password = request.form['password']
 		if username not in passwords.keys():
-			flash("University not registered", "error")
+			flash("Такой университета нет в системе. Возможно, Вы ошиблись в логине.", "error")
 			return render_template('login.html')
 		if passwords[username] != hashlib.sha3_256(password.encode()).hexdigest():
-			flash("Authorization failed. Try again.", "error")
+			flash("Неверный пароль. Попробуйте еще раз.", "error")
 			return render_template('login.html')	
 		session['logged_in'] = True
 		session['username'] = username
@@ -49,12 +49,12 @@ def upload_file():
 
 	if request.method == 'POST':
 		if 'file' not in request.files:
-			flash("No file selected", "error")
+			flash("Файл не выбран", "error")
 			error = "No file selected"
 			return render_template('upload.html', error = error)
 		file = request.files['file']
 		if file.filename == '':
-			flash("No file selected", "error")
+			flash("Файл не выбран", "error")
 			return render_template('upload.html')
 		
 		if file and file.filename.split(".")[-1] == 'csv':
@@ -104,10 +104,10 @@ def upload_file():
 					with open(os.path.join(app.config['JSONs'], filename), 'w') as json_file:
 						json_file.write(json.dumps(data))
 					
-				flash("Information successfully added.", "success")
+				flash("Информация обновлена успешно.", "success")
 
 		else:
-			flash("Please, check uploaded file. It should be .csv format.", "error")
+			flash("Пожалуйста, проверьте загружаемый файл. Он должен быть в формате .csv.", "error")
 			error = "Wrong file"
 			return render_template('upload.html', error = error)
 					
@@ -125,7 +125,7 @@ def verify():
 		
 		jsonFile = request.files['json']
 		if jsonFile.filename == '':
-			flash("No file selected!", "error")
+			flash("Файл не выбран!", "error")
 			return render_template('verify.html')
 		
 		if jsonFile and jsonFile.filename.split(".")[-1] == 'json':
@@ -149,11 +149,11 @@ def verify():
 			except:
 				print("Error occurred")
 			if res is True:
-				flash(f"Data about diploma found:\nName:{receiptJsonData['name']}\nUniversity:{receiptJsonData['institution']}\nGraduation year:{receiptJsonData['year']}", "success")
+				flash(f"Данные диплома найдены:\nName:{receiptJsonData['name']}\nUniversity:{receiptJsonData['institution']}\nGraduation year:{receiptJsonData['year']}", "success")
 			else:
-				flash("JSON key seems to be depricated or fake.", "error")
+				flash("JSON ключ устаревший или поддельный.", "error")
 		else:
-			flash("Please, check uploaded file. It should be .json format.", "error")
+			flash("Пожалуйста, проверьте загружаемый файл. Он должен быть формата .json", "error")
 			error = "Wrong file"
 			return render_template('verify.html', error = error)
 
